@@ -3,6 +3,7 @@
 
 <head>
     <title>File List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             background-color: whitesmoke;
@@ -28,7 +29,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             list-style-type: none;
             padding: 0;
             margin: 0;
@@ -36,43 +37,25 @@
         
         .file-item {
             margin: 10px;
-            background-color: #e6f5e9;
             border-radius: 10px;
+            position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 150px;
-            height: 150px;
-            padding: 10px;
-            position: relative;
-            /* Adicionado para posicionar o nome corretamente */
+            justify-content: space-between;
         }
         
         .file-icon {
             font-size: 40px;
             color: #0c3214;
             margin-bottom: 10px;
-        }
-        
-        .file-name {
-            text-align: center;
-            color: #0c3214;
-            font-size: 16px;
-            letter-spacing: 1.5px;
-            max-width: 120px;
-            /* Largura máxima para o nome do arquivo */
-            white-space: nowrap;
-            /* Impede a quebra de linha */
-            overflow: hidden;
-            /* Controla o comportamento de texto que transborda */
-            text-overflow: ellipsis;
-            /* Adiciona reticências (...) quando o texto transborda */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .file-buttons {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             margin-top: 10px;
         }
@@ -96,33 +79,51 @@
             padding: 10px;
             background-color: #e6f5e9;
             border-radius: 5px;
-            font-size: 16px;
-            color: #0c3214;
+            font-size: 14px;
+            letter-spacing: 1px;
             cursor: pointer;
+            border: none;
+            outline: none;
         }
         
-        .custom-button:hover {
-            opacity: 0.8;
+        .card-fixed-height {
+            width: 200px;
+        }
+        
+        .card-img-top {
+            object-fit: contain;
+            max-height: 100%;
+            max-width: 100%;
+            margin: auto;
         }
     </style>
 </head>
 
 <body>
-    <h1>File List</h1>
-    <ul class="file-list">
-        {% for file in files %}
-        <li class="file-item">
-            <i class="fa fa-file-pdf file-icon"></i>
-            <div class="file-name">{{ file }}</div>
-            <div class="file-buttons">
-                <form action="/delete_file/{{ file }}" method="POST">
-                    <button class="file-button" type="submit">Excluir</button>
-                </form>
-                <a href="/download_file/{{ file }}" class="file-button">Baixar</a>
+    <h1>Lista de Arquivos</h1>
+    <div class="container">
+        <div class="file-list">
+            {% for file in files %}
+            <div class="file-item">
+                <div class="card card-fixed-height">
+                    {% if file|is_image_file %}
+                    <img src="/thumbnails/thumbnail_{{ file }}" alt="{{ file }}" class="card-img-top"> {% else %}
+                    <div class="file-icon">📄</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{ file }}</h5>
+                        <div class="file-buttons">
+                            <form method="POST" action="/delete_file/{{ file }}" onsubmit="return confirm('Tem certeza que deseja excluir este arquivo?')">
+                                <button class="btn btn-danger" type="submit">Excluir</button>
+                            </form>
+                            <a href="/download_file/{{ file }}" class="btn btn-primary">Baixar</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </div>
+    </div>
     <button class="custom-button" onclick="goupload()">Go to Upload File</button>
     <script>
         function goupload() {
