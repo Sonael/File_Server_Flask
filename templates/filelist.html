@@ -4,11 +4,18 @@
 <head>
     <title>File List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+        html {
+            height: 100%;
+        }
+        
         body {
-            background-color: whitesmoke;
-            background-image: url("https://www.transparenttextures.com/patterns/lyonnette.png");
-            border-bottom: 0px solid black;
+            background: linear-gradient(#141e30, #243b55);
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
             height: 450px;
             display: flex;
             flex-direction: column;
@@ -18,11 +25,11 @@
         
         h1 {
             text-align: center;
-            color: #0c3214;
+            color: white;
             font-size: 24px;
             letter-spacing: 1.5px;
             margin-top: 50px;
-            margin-bottom: 0;
+            margin-bottom: 20px;
         }
         
         .file-list {
@@ -74,7 +81,7 @@
         
         .custom-button {
             position: absolute;
-            top: 10px;
+            top: 40px;
             right: 10px;
             padding: 10px;
             background-color: #e6f5e9;
@@ -96,11 +103,67 @@
             max-width: 100%;
             margin: auto;
         }
+        
+        .upload-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .upload-popup-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-popup-dropzone {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-popup-dropzone p {
+            margin: 0;
+        }
+        
+        .upload-popup-button {
+            background-color: #0c3214;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 10px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Lista de Arquivos</h1>
+    <header>
+
+        <nav>
+            <div class="nav-wrapper">
+                <h1>Lista de Arquivos</h1>
+            </div>
+        </nav>
+
+
+    </header>
     <div class="container">
         <div class="file-list">
             {% for file in files %}
@@ -124,12 +187,106 @@
             {% endfor %}
         </div>
     </div>
-    <button class="custom-button" onclick="goupload()">Go to Upload File</button>
+    <button class="custom-button" onclick="openUploadPopup()"><i class="material-icons">file_upload</i></button>
+    <div class="upload-popup" id="uploadPopup">
+        <div class="upload-popup-content">
+            <h2 class="upload-popup-title">Arraste e solte os arquivos aqui</h2>
+            <div class="upload-popup-dropzone" id="dropzone">
+                <p>ou</p>
+                <input type="file" id="fileInput" multiple>
+            </div>
+            <button class="upload-popup-button" onclick="uploadFiles()">Upload</button>
+            <button class="upload-popup-button" onclick="closeUploadPopup()">Fechar</button>
+            <ul id="selectedFiles"></ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function goupload() {
-            // Redirect to the "upload" endpoint
-            window.location.href = "/upload";
+        function openUploadPopup() {
+            var uploadPopup = document.getElementById("uploadPopup");
+            uploadPopup.style.display = "flex";
         }
+
+        function closeUploadPopup() {
+            var uploadPopup = document.getElementById("uploadPopup");
+            uploadPopup.style.display = "none";
+        }
+
+        function updateSelectedFilesList() {
+            var fileInput = document.getElementById("fileInput");
+            var selectedFilesList = document.getElementById("selectedFiles");
+            selectedFilesList.innerHTML = "";
+
+            for (var i = 0; i < fileInput.files.length; i++) {
+                var listItem = document.createElement("li");
+                listItem.textContent = fileInput.files[i].name;
+                selectedFilesList.appendChild(listItem);
+            }
+        }
+
+        function uploadFiles() {
+            var files = document.getElementById("fileInput").files;
+            var formData = new FormData();
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append("files[]", files[i]);
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/fileupload");
+            xhr.send(formData);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: 'Arquivos enviados com sucesso.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao enviar os arquivos.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            };
+
+            closeUploadPopup();
+        }
+
+
+        var dropzone = document.getElementById("dropzone");
+        dropzone.addEventListener("dragover", function(e) {
+            e.preventDefault();
+            dropzone.style.border = "2px dashed #0c3214";
+        });
+
+        dropzone.addEventListener("dragleave", function(e) {
+            e.preventDefault();
+            dropzone.style.border = "2px dashed #ccc";
+        });
+
+        dropzone.addEventListener("drop", function(e) {
+            e.preventDefault();
+            dropzone.style.border = "2px dashed #ccc";
+            var files = e.dataTransfer.files;
+            var fileInput = document.getElementById("fileInput");
+            fileInput.files = files;
+            updateSelectedFilesList();
+        });
+
+        var fileInput = document.getElementById("fileInput");
+        fileInput.addEventListener("change", function() {
+            updateSelectedFilesList();
+        });
     </script>
 </body>
 

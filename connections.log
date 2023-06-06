@@ -1,10 +1,10 @@
-2023-06-05 01:47:23,462 INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2023-06-06 02:26:28,337 INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:80
-2023-06-05 01:47:23,466 INFO - [33mPress CTRL+C to quit[0m
-2023-06-05 01:47:23,508 INFO -  * Restarting with watchdog (windowsapi)
-2023-06-05 01:47:24,957 WARNING -  * Debugger is active!
-2023-06-05 01:47:24,969 INFO -  * Debugger PIN: 112-779-831
-2023-06-05 01:47:31,148 INFO - GET http://localhost/filelist - 127.0.0.1
-2023-06-05 01:47:31,349 INFO - 127.0.0.1 - - [05/Jun/2023 01:47:31] "GET /filelist HTTP/1.1" 200 -
-2023-06-05 01:47:31,447 INFO - GET http://localhost/thumbnails/thumbnail_download.png - 127.0.0.1
-2023-06-05 01:47:31,573 INFO - 127.0.0.1 - - [05/Jun/2023 01:47:31] "GET /thumbnails/thumbnail_download.png HTTP/1.1" 200 -
+2023-06-06 02:26:28,339 INFO - [33mPress CTRL+C to quit[0m
+2023-06-06 02:26:28,393 INFO -  * Restarting with watchdog (windowsapi)
+2023-06-06 02:26:29,967 WARNING -  * Debugger is active!
+2023-06-06 02:26:29,980 INFO -  * Debugger PIN: 112-779-831
+2023-06-06 02:26:40,393 INFO - GET http://localhost/filelist - 127.0.0.1
+2023-06-06 02:26:40,421 INFO - 127.0.0.1 - - [06/Jun/2023 02:26:40] "GET /filelist HTTP/1.1" 200 -
+2023-06-06 02:26:40,539 INFO - GET http://localhost/thumbnails/thumbnail_download.png - 127.0.0.1
+2023-06-06 02:26:40,705 INFO - 127.0.0.1 - - [06/Jun/2023 02:26:40] "[36mGET /thumbnails/thumbnail_download.png HTTP/1.1[0m" 304 -

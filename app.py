@@ -55,6 +55,15 @@ def generate_thumbnail(filepath, filename, size=(150, 150)):
     thumbnail_path = os.path.join(THUMBNAIL_FOLDER, thumbnail_filename)
     image.save(thumbnail_path)
 
+#Excluir miniaturas de imagens que não existem mais
+def delete_thumbnails():
+    for filename in os.listdir(THUMBNAIL_FOLDER):
+        thumbnail_path = os.path.join(THUMBNAIL_FOLDER, filename)
+        if os.path.isfile(thumbnail_path):
+            original_filename = filename.replace("thumbnail_", "")
+            original_filepath = os.path.join(UPLOAD_FOLDER, original_filename)
+            if not os.path.exists(original_filepath):
+                os.remove(thumbnail_path)
 
 # Middleware para registrar as conexões
 @app.before_request
@@ -85,12 +94,6 @@ def authenticate():
         return redirect(url_for('login'))
 
 
-@app.route('/upload')
-def upload_form():
-    if not session.get('logged_in'):  # Verificar se o usuário está logado antes de permitir o acesso à página de upload
-        return redirect(url_for('login'))
-    return render_template('upload.html')
-
 @app.route('/delete_file/<filename>', methods=['POST'])
 def delete_file(filename):
     filepath = os.path.join(UPLOAD_FOLDER, filename)
@@ -110,6 +113,7 @@ def file_list():
     if not session.get('logged_in'):  # Verificar se o usuário está logado antes de permitir o acesso à lista de arquivos
         return redirect(url_for('login'))
     generate_thumbnails()
+    delete_thumbnails()
     files = os.listdir(UPLOAD_FOLDER)
     return render_template('filelist.html', files=files)
 
